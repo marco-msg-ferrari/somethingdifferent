@@ -10,13 +10,16 @@
             </h1>
         </div>
         <div class="col-12 mt-3">
-            Largo (m) <input [(ngModel)]="largoFrom" placeholder="largoFrom">
-            / {{ largo }} /
-            <input [(ngModel)]="largoTo" placeholder="largoTo">
-            <br>
-            Maletero (l) <input [(ngModel)]="maleteroFrom" placeholder="maleteroFrom">
-            / {{ maletero }} /
-            <input [(ngModel)]="maleteroTo" placeholder="maleteroTo">
+            <div *ngFor="let axis of axisArray">
+                <div *ngIf="axis.searchName">
+                    <label><input type="checkbox" [checked]="axis.active" (change)="axis.active = !axis.active" />
+                        {{ axis.name }} ({{ axis.unit }})
+                    </label>
+                    <input [(ngModel)]="axis.valueFrom">
+                    / {{ axis.value }} /
+                    <input [(ngModel)]="axis.valueTo">
+                </div>
+            </div>
         </div>
         <div class="col-12 mt-3">
             <p>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {Axis} from '../app/axis';
 
 @Component({
   selector: 'app-root',
@@ -11,14 +12,23 @@ export class AppComponent {
     apiKey = '';
     tlpt: any = {};
     alternativeArray: any = {};
-    maletero: any = {};
-    maleteroFrom: any = {};
-    maleteroTo: any = {};
-    largo: any = {};
-    largoFrom: any = {};
-    largoTo: any = {};
+    axisArray = [];
+    axisTransform = [];
+    axisPrecision = [];
+    query = '';
 
     constructor(private http: HttpClient){
+        this.axisTransform['largo'] = 'lenght';
+        this.axisTransform['alto'] = 'height';
+        this.axisTransform['ancho'] = 'width';
+        this.axisTransform['volumen_maletero_principal'] = 'trunkvolume';
+        this.axisTransform['potencia_maxima'] = 'power';
+
+        this.axisPrecision['largo'] = 0;
+        this.axisPrecision['alto'] = 0;
+        this.axisPrecision['ancho'] = 0;
+        this.axisPrecision['volumen_maletero_principal'] = 0;
+        this.axisPrecision['potencia_maxima'] = 1;
     }
 
     ngOnInit(): void {
@@ -31,16 +41,19 @@ export class AppComponent {
                 this.tlpt = data.tlpts[0];
 
                 this.tlpt.measurements.forEach(obj=> {
-                    if (obj.slug === 'largo') {
-                        this.largoFrom = obj.value.value - 50;
-                        this.largo = obj.value.value;
-                        this.largoTo = obj.value.value + 50;
+
+                    if (!isNaN(obj.value.value)) {
+                        this.axisArray.push(<Axis> {
+                            active: false,
+                            slug: obj.slug,
+                            name: obj.name,
+                            unit: obj.unit,
+                            value: obj.value.value,
+                            valueFrom: (obj.value.value * 0.9).toFixed(this.axisPrecision[obj.slug]),
+                            valueTo: (obj.value.value * 1.1).toFixed(this.axisPrecision[obj.slug]),
+                            searchName: this.axisTransform[obj.slug]
+                        });
                     }
-                    if (obj.slug === 'volumen_maletero_principal') {
-                        this.maleteroFrom = obj.value.value - 50;
-                        this.maletero = obj.value.value;
-                        this.maleteroTo = obj.value.value + 50;
-                   }
                 });
 
             },
@@ -51,15 +64,22 @@ export class AppComponent {
     }
 
     onClickMe() {
+        this.query = '';
+        this.axisArray.forEach(obj=> {
+            if (obj.active) {
+                this.query += '&' + obj.searchName + '-from=' + obj.valueFrom;
+                this.query += '&' + obj.searchName + '-to=' + obj.valueTo;
+            }
+        });
+        console.log(this.query);
+
         this.http.get<VehicleResponse>(
             'https://fapi.km77.com/search/' +
             '?q=ve:car:*&type=vehicle' +
             '&market=[onsale]' +
             '&numdoors=[5]' +
-            '&length-from=' + this.largoFrom + '&length-to=' + this.largoTo +
-            '&width-from=1120&width-to=2760' +
-            '&height-from=900&height-to=2680' +
-            '&trunkvolume-from=' + this.maleteroFrom + '&trunkvolume-to=' + this.maleteroTo +
+            '&fuel=gasoleo' +
+            this.query +
             '&price-asc=undefined' +
             '&first=1&seek=20' +
             '&k=' + this.apiKey
