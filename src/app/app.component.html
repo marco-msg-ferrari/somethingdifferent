@@ -1,0 +1,49 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="container">
+    <div class="row">
+        <div class="col-4 mt-3">
+            <img class="img-fluid" width="300" alt="Foto" src="{{ tlpt.photos[0] }}">
+        </div>
+        <div class="col-8">
+            <h1>
+              {{ tlpt.fullname }}
+            </h1>
+        </div>
+        <div class="col-12 mt-3">
+            Largo (m) <input [(ngModel)]="largoFrom" placeholder="largoFrom">
+            / {{ largo }} /
+            <input [(ngModel)]="largoTo" placeholder="largoTo">
+            <br>
+            Maletero (l) <input [(ngModel)]="maleteroFrom" placeholder="maleteroFrom">
+            / {{ maletero }} /
+            <input [(ngModel)]="maleteroTo" placeholder="maleteroTo">
+        </div>
+        <div class="col-12 mt-3">
+            <p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Mediciones
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample">
+                <table class="table table-sm">
+                    <tr *ngFor="let measure of tlpt.measurements">
+                        <td>{{ measure.name }}</td>
+                        <td>{{ measure.value.value }} ({{ measure.unit }})</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-12">
+            <button (click)="onClickMe()">Alternativas</button>
+            <div class="row">
+                <div class="col-2 mb-2" *ngFor="let alternative of alternativeArray">
+                   <a href="https://www.km77.com/comparador/{{nql}},{{alternative.nql}}" target="_blank">
+                       <img class="img-fluid" width="300" alt="Foto" src="{{ alternative.photos[0] }}">
+                       {{ alternative.fullname }}
+                   </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
