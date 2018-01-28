@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Axis} from '../app/axis';
 
@@ -7,7 +7,7 @@ import {Axis} from '../app/axis';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent  implements OnInit {
     nql = 've:car:hyundai:i30:2012:5-puertas:tecno:i30-14-crdi-110-cv-tecno';
     apiKey = '';
     tlpt: any = {};
@@ -17,7 +17,7 @@ export class AppComponent {
     axisPrecision = [];
     query = '';
 
-    constructor(private http: HttpClient){
+    constructor(private http: HttpClient) {
         this.axisTransform['largo'] = 'lenght';
         this.axisTransform['alto'] = 'height';
         this.axisTransform['ancho'] = 'width';
@@ -29,6 +29,17 @@ export class AppComponent {
         this.axisPrecision['ancho'] = 0;
         this.axisPrecision['volumen_maletero_principal'] = 0;
         this.axisPrecision['potencia_maxima'] = 1;
+
+        this.axisArray.push(<Axis> {
+            active: false,
+            slug: 'precio',
+            name: 'Precio',
+            unit: '€',
+            value: 20000,
+            valueFrom: 16000,
+            valueTo: 30000,
+            searchName: 'price'
+        });
     }
 
     ngOnInit(): void {
@@ -40,7 +51,7 @@ export class AppComponent {
             data => {
                 this.tlpt = data.tlpts[0];
 
-                this.tlpt.measurements.forEach(obj=> {
+                this.tlpt.measurements.forEach(obj => {
 
                     if (!isNaN(obj.value.value)) {
                         this.axisArray.push(<Axis> {
@@ -49,8 +60,8 @@ export class AppComponent {
                             name: obj.name,
                             unit: obj.unit,
                             value: obj.value.value,
-                            valueFrom: (obj.value.value * 0.9).toFixed(this.axisPrecision[obj.slug]),
-                            valueTo: (obj.value.value * 1.1).toFixed(this.axisPrecision[obj.slug]),
+                            valueFrom: parseFloat((obj.value.value * 0.9).toFixed(this.axisPrecision[obj.slug])),
+                            valueTo: parseFloat((obj.value.value * 1.1).toFixed(this.axisPrecision[obj.slug])),
                             searchName: this.axisTransform[obj.slug]
                         });
                     }
@@ -58,14 +69,14 @@ export class AppComponent {
 
             },
             err => {
-                console.log("Error occured.");
+                console.log('Error occured.');
             }
         );
     }
 
     onClickMe() {
         this.query = '';
-        this.axisArray.forEach(obj=> {
+        this.axisArray.forEach(obj => {
             if (obj.active) {
                 this.query += '&' + obj.searchName + '-from=' + obj.valueFrom;
                 this.query += '&' + obj.searchName + '-to=' + obj.valueTo;
@@ -88,7 +99,7 @@ export class AppComponent {
                 this.alternativeArray = data.tlpts;
             },
             err => {
-                console.log("Error occured.");
+                console.log('Error occured.');
             }
         );
     }

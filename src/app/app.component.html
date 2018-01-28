@@ -10,18 +10,6 @@
             </h1>
         </div>
         <div class="col-12 mt-3">
-            <div *ngFor="let axis of axisArray">
-                <div *ngIf="axis.searchName">
-                    <label><input type="checkbox" [checked]="axis.active" (change)="axis.active = !axis.active" />
-                        {{ axis.name }} ({{ axis.unit }})
-                    </label>
-                    <input [(ngModel)]="axis.valueFrom">
-                    / {{ axis.value }} /
-                    <input [(ngModel)]="axis.valueTo">
-                </div>
-            </div>
-        </div>
-        <div class="col-12 mt-3">
             <p>
                 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     Mediciones
@@ -36,15 +24,39 @@
                 </table>
             </div>
         </div>
-        <div class="col-12">
-            <button (click)="onClickMe()">Alternativas</button>
-            <div class="row">
-                <div class="col-2 mb-2" *ngFor="let alternative of alternativeArray">
-                   <a href="https://www.km77.com/comparador/{{nql}},{{alternative.nql}}" target="_blank">
-                       <img class="img-fluid" width="300" alt="Foto" src="{{ alternative.photos[0] }}">
-                       {{ alternative.fullname }}
-                   </a>
+        <div class="col-12 mt-3">
+            <div *ngFor="let axis of axisArray">
+                <div *ngIf="axis.searchName">
+                    <label><input type="checkbox" [checked]="axis.active" (change)="axis.active = !axis.active" />
+                        {{ axis.name }} ({{ axis.unit }})
+                    </label>
+                    <input [(ngModel)]="axis.valueFrom">
+                    / {{ axis.value }} /
+                    <input [(ngModel)]="axis.valueTo">
                 </div>
+            </div>
+            <button class="btn btn-primary" type="button" (click)="onClickMe()">Alternativas</button>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="row">
+                <table class="col-12 mb-2 table table-sm" *ngFor="let alternative of alternativeArray">
+                    <tr>
+                        <td width="10%">
+                            <a href="https://www.km77.com/comparador/{{nql}},{{alternative.nql}}" target="_blank">
+                                <img class="img-fluid" width="300" alt="Foto" src="{{ alternative.photos[0] }}">
+                            </a>
+                        </td>
+                        <td width="30%">
+                            {{ alternative.fullname }}
+                        </td>
+                        <td width="10%">
+                            {{ (alternative.price.base * (1 + alternative.price.vat / 100 ) - alternative.price.discount).toFixed(0) }} €
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                    </tr>
+                </table>
 
             </div>
         </div>
